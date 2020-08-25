@@ -9,14 +9,15 @@ describe('Department', () => {
     before(async () => {
 
         try {
-          const fakeDB = new MongoMemoryServer();
+            console.log('test');
+          const fakeDB = await MongoMemoryServer.create({binary:{version: "4.2.6"}});
       
           const uri = await fakeDB.getConnectionString();
       
           mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
       
         } catch(err) {
-          console.log(err);
+          console.log(err + 'test');
         }
       
     });
@@ -40,7 +41,6 @@ describe('Department', () => {
 
         it('should return a proper document by "name" with "findOne" method', async () => {
             const department = await Department.findOne({ name: 'Department #1' });
-            //const expectedName = 'Department #1';
             expect(department.name).to.be.equal('Department #1');
         }); 
 

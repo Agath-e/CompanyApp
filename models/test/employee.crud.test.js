@@ -8,11 +8,13 @@ describe('Employee', () => {
     before(async () => {
 
         try {
-          const fakeDB = new MongoMemoryServer();
+            console.log('test');
+          const fakeDB = await MongoMemoryServer.create({binary:{version: "4.2.6"}});
       
           const uri = await fakeDB.getConnectionString();
       
-          mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+          await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
       
         } catch(err) {
           console.log(err);
@@ -39,8 +41,7 @@ describe('Employee', () => {
 
         it('should return a proper document by various params with "findOne" method', async () => {
             const employee = await Employee.findOne({ firstName: 'firstName #1', lastName: 'lastName #1' , department: 'department #1'  });
-            const expectedName = 'Employee #1';
-            expect(employee.firstName).to.be.equal(expectedName);
+            expect(employee.firstName).to.be.equal('firstName #1');
             expect(employee.lastName).to.be.equal('lastName #1');
             expect(employee.department).to.be.equal('department #1');
         }); 
@@ -77,7 +78,7 @@ describe('Employee', () => {
 
         it('should properly update one document with "updateOne" method', async () => {
             await Employee.updateOne({ firstName: 'firstName #1', lastName: 'lastName #1' , department: 'department #1' }, { $set: {firstName: '=firstName #1=', lastName: '=lastName #1=' , department: '=department #1=' }});
-            const updatedEmployee = await Department.findOne({ firstName: '=firstName #1=', lastName: '=lastName #1=' , department: '=department #1=' });
+            const updatedEmployee = await Employee.findOne({ firstName: '=firstName #1=', lastName: '=lastName #1=' , department: '=department #1=' });
             expect(updatedEmployee).to.not.be.null;
         });
       
@@ -115,8 +116,8 @@ describe('Employee', () => {
         });
 
         it('should properly remove one document with "deleteOne" method', async () => {
-            await Employee.deleteOne({ firstName: 'firstName #1', lastName: 'lastName #1' , department: 'department #1' });
-            const removeEmployee = await Department.findOne({firstName: 'firstName #1', lastName: 'lastName #1' , department: 'department #1' });
+            await Employee.deleteOne({ firstName: 'firstName #1', lastName: 'lastName #1', department: 'department #1' });
+            const removeEmployee = await Employee.findOne({firstName: 'firstName #1', lastName: 'lastName #1' , department: 'department #1' });
             expect(removeEmployee).to.be.null;
         });
       
